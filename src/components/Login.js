@@ -15,7 +15,12 @@ function Login({onSubmit}) {
   }
 
   const handleSubmitLogin = (e) => {
-    onSubmit(e, formValue)
+    e.preventDefault();
+    if(!formValue.email || !formValue.password) {
+      return;
+    }
+    onSubmit(formValue.email, formValue. password);
+    setFormValue({email: '', password: ''});
   }
 
   return(

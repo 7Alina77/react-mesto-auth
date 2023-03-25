@@ -1,76 +1,49 @@
 export const BASE_URL = 'https://auth.nomoreparties.co';
-
-class Auth {
-  constructor(BASE_URL) {
-    this._url = BASE_URL;
-    this.jwt = localStorage.getItem('jwt');
-  }
   
-  register ({email, password}) {
-    return fetch(`${this._url}/signup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email,
-        password
-      })
-    })
-    .then((response) => {
-      try {
-        if(response.status === 200) {
-          return response.json();
-        }
-      }
-      catch(e) {
-        return (e)
-      }
-    })
-    .then((res) => {
-      return res
-    })
-    .catch((err) => console.log(err))
-  }
-  
-  authorization({email, password}) {
-    return fetch(`${this._url}/signin`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email,
-        password
-      })
-    })
-    .then((response) => {
-      try {
-        if(response.status === 200) {
-          return response.json();
-        }
-      }
-      catch(e) {
-        return (e)
-      }
-    })
-    .then((res) => {
-      return res
-    })
-    .catch((err) => console.log(err))
-  } 
-
-  checkToken(jwt) {
-    return fetch(`${this._url}/users/me`, {
-      method: 'GET',
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization" : `Bearer ${jwt}`
-      }
-      .catch((err) => console.log(err))
-    })
-  }
+export const register = (email, password) => {
+  return fetch(`${BASE_URL}/signup`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ email, password}),
+  })
+  .then((response) => {
+    response.status === 400 || response.ok ? response.json() : Promise.reject(`${response.status}`)
+  })
+  .then((res) => {
+    return res;
+  })
+  .catch((err) => console.log(err));
 }
 
-const auth = new Auth(BASE_URL);
-export default auth;
+export const authorization = (email, password) => {
+  return fetch(`${BASE_URL}/signin`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ email,password})
+  })
+  .then((response => response.json()))
+  .then((data) => {
+    if (data.token){
+      localStorage.setItem('token', JSON.stringify(data.token));
+      return data;
+    }
+  })
+  .catch(err => console.log(err))
+}; 
+
+export const checkToken = (token) => {
+  return fetch(`${BASE_URL}/users/me`, {
+    method: 'GET',
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization" : `Bearer ${token}`
+    }
+  })
+  .then(res => res.json())
+  .then(data => data)
+  .catch((err) => console.log(err));
+}
