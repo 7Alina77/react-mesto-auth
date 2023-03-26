@@ -21,7 +21,7 @@ function Header({email, onClick}) {
         {main && (
           <div className='header__nav'>
             <p className='header__nav-email'>{email}</p>
-            <Link to={pathLink} onClick={onClick} className='header__nav-link'>{text}</Link>
+            <Link to={pathLink} onClick={onClick} className='header__nav-link header__nav-link_exit'>{text}</Link>
           </div>
         )}
         {!main && (

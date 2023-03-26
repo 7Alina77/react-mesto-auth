@@ -52,7 +52,6 @@ function App() {
   const handleTokenCheck = (token) => {
     auth.checkToken(token)
       .then(({data}) => {
-        console.log(data.token);
         setLoggedUserEmail(data.email);
         setLoggedIn(true);
         navigate('/', {replace: true});
@@ -78,11 +77,16 @@ function App() {
   };
 
   function handleRegister(email, password) {
-    auth.register(email, password)
-      .then(()=> {
-        setIsComplete(true);
+    return auth.register(email, password)
+      .then((data)=> {
+        if(data){
+          setIsComplete(false);
+          setInfoRegisterPopupOpen(true);
+        }else{
+          setIsComplete(true);
         setInfoRegisterPopupOpen(true);
         navigate('/sign-in', {replace: true})
+        }
       })
       .catch((err) => {
         setIsComplete(false);
