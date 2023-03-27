@@ -5,7 +5,7 @@ import { Link, useLocation} from 'react-router-dom';
 function Header({email, onClick}) {
   const [locationIs, setLocationIs] = useState({main: null, pathLink: '', text:''});
 
-  let location = useLocation();
+  const location = useLocation();
   const path = location.pathname;
   const {main, pathLink, text} = locationIs;
 

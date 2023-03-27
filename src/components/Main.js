@@ -4,6 +4,18 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 function Main(props) {
   const currentUser = React.useContext(CurrentUserContext);
+  const cardsElements = props.cards.map((card) => (
+    <Card 
+      key={card._id}
+      card={card}
+      link = {card.link}
+      name ={card.name}
+      likes = {card.likes}
+      onClick={props.onCardClick}
+      onCardLike={props.handleLikeClick}
+      onCardDelete = {props.handleDeleteClick}
+    />
+  ))
 
   return (currentUser &&
     <main className="main">
@@ -19,18 +31,7 @@ function Main(props) {
         <button className="profile__add-button" type="button" onClick={props.onAddPlace}></button>
       </section>
       <section className="elements">
-        {props.cards.map((card) => (
-          <Card 
-            key={card._id}
-            card={card}
-            link = {card.link}
-            name ={card.name}
-            likes = {card.likes}
-            onClick={props.onCardClick}
-            onCardLike={props.handleLikeClick}
-            onCardDelete = {props.handleDeleteClick}
-            />
-        ))}
+        {cardsElements}
       </section>
     </main>
   );

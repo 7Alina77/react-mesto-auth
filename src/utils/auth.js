@@ -8,16 +8,14 @@ export const register = (email, password) => {
     },
     body: JSON.stringify({ email, password}),
   })
-  .then((response) => {
-    response.status === 400 || response.ok ? response.json() : Promise.reject(`${response.status}`)
-  })
+  .then(response => response.ok ? Promise.reject(`${response.ok}`) : response.json() )
   .then((res) => {
     return res;
   })
   .catch((err) => console.log(err));
 }
 
-export const authorization = (email, password) => {
+export const authorize = (email, password) => {
   return fetch(`${BASE_URL}/signin`, {
     method: 'POST',
     headers: {
@@ -25,10 +23,10 @@ export const authorization = (email, password) => {
     },
     body: JSON.stringify({ email,password})
   })
-  .then((response => response.json()))
+  .then(response => response.ok ? response.json() : Promise.reject(`${response.ok}`))
   .then((data) => {
     if (data.token){
-      localStorage.setItem('token', JSON.stringify(data.token));
+      localStorage.setItem('token', data.token);
       return data;
     }
   })
@@ -43,7 +41,7 @@ export const checkToken = (token) => {
       "Authorization" : `Bearer ${token}`
     }
   })
-  .then(res => res.json())
+  .then(response => response.ok ? response.json() : Promise.reject(`${response.ok}`))
   .then(data => data)
   .catch((err) => console.log(err));
 }

@@ -28,16 +28,23 @@ function App() {
   const [cards, setCards] = useState([]);
   const [loggedIn, setLoggedIn] = useState(false);
   const [loggedUserEmail, setLoggedUserEmail] = useState('');
-  const [isComplete, setIsComplete] = useState(true);
-  const [infoRegisterPopupOpen ,setInfoRegisterPopupOpen] = useState(false);
-  const navigate = useNavigate();
+  const [isInfoTooltipOpen ,setIsInfoTooltipOpen] = useState(false);
+  const [isSuccessInfoTooltipStatus, setIsSuccessInfoTooltipStatus] = useState({
+    isRegister: true,
+    text: 'Вы успешно зарегистрировались!'
+  });
 
+  const navigate = useNavigate();
+    
   useEffect(() => {
     const token = localStorage.getItem('token');
     if(token && !loggedIn) {
       handleTokenCheck(token);
     };
-    if(token && loggedIn) {
+  }, []);
+
+  useEffect(() => {
+    if(loggedIn) {
       Promise.all([api.handleGetUserInfo(), api.getInitialCards()])
         .then(([userData, cardsData]) => {
           setCurrentUser(userData);
@@ -62,16 +69,17 @@ function App() {
   }
 
   function handleLogin(email, password) {
-    return auth.authorization(email, password)
+    return auth.authorize(email, password)
       .then((data) => {
-        localStorage.setItem('token', JSON.stringify(data.token));
+        localStorage.setItem('token', data.token);
         setLoggedUserEmail(email);
         setLoggedIn(true);
         navigate('/', {replace: true})
-      })
+        }
+      )
       .catch((err) => {
-        setIsComplete(false);
-        setInfoRegisterPopupOpen(true);
+        setIsSuccessInfoTooltipStatus({isRegister: false, text:'Что-то пошло не так! Попробуйте ещё раз. ' + err.message});
+        setIsInfoTooltipOpen(true);
         console.log(err.message);
       })
   };
@@ -80,17 +88,17 @@ function App() {
     return auth.register(email, password)
       .then((data)=> {
         if(data){
-          setIsComplete(false);
-          setInfoRegisterPopupOpen(true);
+          setIsSuccessInfoTooltipStatus({isRegister: false, text:'Что-то пошло не так! Попробуйте ещё раз: ' + data.error});
+          setIsInfoTooltipOpen(true);
         }else{
-          setIsComplete(true);
-        setInfoRegisterPopupOpen(true);
-        navigate('/sign-in', {replace: true})
+          setIsSuccessInfoTooltipStatus({isRegister:true, text:'Вы успешно зарегистрировались!'});
+          setIsInfoTooltipOpen(true);
+          navigate('/sign-in', {replace: true})
         }
       })
       .catch((err) => {
-        setIsComplete(false);
-        setInfoRegisterPopupOpen(true);
+        setIsSuccessInfoTooltipStatus({isRegister: false, text:'Что-то пошло не так! Попробуйте ещё раз.'});
+        setIsInfoTooltipOpen(true);
         console.log(err);
       })
     };
@@ -183,7 +191,7 @@ function App() {
     setIsEditProfilePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
     setIsDeleteCardPopupOpen(false);
-    setInfoRegisterPopupOpen(false);
+    setIsInfoTooltipOpen(false);
     setSelectedCard(null)
   }
 
@@ -236,9 +244,9 @@ function App() {
       />
       <InfoTooltip 
         name = 'register'
-        isOpen = {infoRegisterPopupOpen}
+        isOpen = {isInfoTooltipOpen}
         onClose = {closeAllPopups}
-        isComplete = {isComplete}
+        isSuccessInfoTooltipStatus = {isSuccessInfoTooltipStatus}
       />
     </div> 
   </CurrentUserContext.Provider>
