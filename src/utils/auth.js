@@ -1,4 +1,6 @@
 export const BASE_URL = 'https://auth.nomoreparties.co';
+
+const checkResponse = response => response.ok ? response.json() : Promise.reject(`${response.status}`);
   
 export const register = (email, password) => {
   return fetch(`${BASE_URL}/signup`, {
@@ -8,11 +10,10 @@ export const register = (email, password) => {
     },
     body: JSON.stringify({ email, password}),
   })
-  .then(response => response.ok ? Promise.reject(`${response.ok}`) : response.json() )
+  .then(response => checkResponse(response))
   .then((res) => {
     return res;
   })
-  .catch((err) => console.log(err));
 }
 
 export const authorize = (email, password) => {
@@ -23,14 +24,13 @@ export const authorize = (email, password) => {
     },
     body: JSON.stringify({ email,password})
   })
-  .then(response => response.ok ? response.json() : Promise.reject(`${response.ok}`))
+  .then(response => checkResponse(response))
   .then((data) => {
     if (data.token){
       localStorage.setItem('token', data.token);
       return data;
     }
   })
-  .catch(err => console.log(err))
 }; 
 
 export const checkToken = (token) => {
@@ -41,7 +41,6 @@ export const checkToken = (token) => {
       "Authorization" : `Bearer ${token}`
     }
   })
-  .then(response => response.ok ? response.json() : Promise.reject(`${response.ok}`))
+  .then(response => checkResponse(response))
   .then(data => data)
-  .catch((err) => console.log(err));
 }

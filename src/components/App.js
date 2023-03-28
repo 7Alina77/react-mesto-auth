@@ -30,7 +30,7 @@ function App() {
   const [loggedUserEmail, setLoggedUserEmail] = useState('');
   const [isInfoTooltipOpen ,setIsInfoTooltipOpen] = useState(false);
   const [isSuccessInfoTooltipStatus, setIsSuccessInfoTooltipStatus] = useState({
-    isRegister: true,
+    isSuccess: true,
     text: 'Вы успешно зарегистрировались!'
   });
 
@@ -78,26 +78,21 @@ function App() {
         }
       )
       .catch((err) => {
-        setIsSuccessInfoTooltipStatus({isRegister: false, text:'Что-то пошло не так! Попробуйте ещё раз. ' + err.message});
+        setIsSuccessInfoTooltipStatus({isSuccess: false, text:'Что-то пошло не так! Попробуйте ещё раз.'});
         setIsInfoTooltipOpen(true);
-        console.log(err.message);
+        console.log(err);
       })
   };
 
   function handleRegister(email, password) {
     return auth.register(email, password)
-      .then((data)=> {
-        if(data){
-          setIsSuccessInfoTooltipStatus({isRegister: false, text:'Что-то пошло не так! Попробуйте ещё раз: ' + data.error});
-          setIsInfoTooltipOpen(true);
-        }else{
-          setIsSuccessInfoTooltipStatus({isRegister:true, text:'Вы успешно зарегистрировались!'});
+      .then(()=> {
+          setIsSuccessInfoTooltipStatus({isSuccess:true, text:'Вы успешно зарегистрировались!'});
           setIsInfoTooltipOpen(true);
           navigate('/sign-in', {replace: true})
-        }
       })
       .catch((err) => {
-        setIsSuccessInfoTooltipStatus({isRegister: false, text:'Что-то пошло не так! Попробуйте ещё раз.'});
+        setIsSuccessInfoTooltipStatus({isSuccess: false, text:'Что-то пошло не так! Попробуйте ещё раз.'});
         setIsInfoTooltipOpen(true);
         console.log(err);
       })
