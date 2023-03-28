@@ -87,9 +87,9 @@ function App() {
   function handleRegister(email, password) {
     return auth.register(email, password)
       .then(()=> {
-          setIsSuccessInfoTooltipStatus({isSuccess:true, text:'Вы успешно зарегистрировались!'});
-          setIsInfoTooltipOpen(true);
-          navigate('/sign-in', {replace: true})
+        setIsSuccessInfoTooltipStatus({isSuccess:true, text:'Вы успешно зарегистрировались!'});
+        setIsInfoTooltipOpen(true);
+        navigate('/sign-in', {replace: true})
       })
       .catch((err) => {
         setIsSuccessInfoTooltipStatus({isSuccess: false, text:'Что-то пошло не так! Попробуйте ещё раз.'});
